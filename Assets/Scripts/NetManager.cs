@@ -3,7 +3,7 @@ namespace UnityEngine.Networking {
     [RequireComponent(typeof(NetworkManager))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class NetManager : MonoBehaviour {
-        const string SERVER_IP = "192.168.1.133";
+        const string SERVER_IP = "192.168.56.1";
         const float TIMEOUT = 1.0f;
         private NetworkManager manager;
         private NetworkClient client = null;
@@ -14,9 +14,8 @@ namespace UnityEngine.Networking {
         }
 
         void Update() {
-            waitTime -= Time.deltaTime;
-            if (waitTime < 0.0f) {
-                waitTime = 0.0f;
+            if (waitTime > 0.0f) {
+                waitTime = Mathf.Max(waitTime - Time.deltaTime, 0.0f);
             }
 
             if (!(client != null && client.isConnected) && !NetworkServer.active) {

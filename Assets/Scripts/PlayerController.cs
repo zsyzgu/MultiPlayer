@@ -20,6 +20,24 @@ public class PlayerController : NetworkBehaviour {
         } else if (Application.platform == RuntimePlatform.Android) {
             controlWithHead();
         }
+
+        calibratePosition();
+    }
+
+    void calibratePosition() {
+        OptiFrame frame = GetComponent<OptiTrack>().getFrame();
+        if (frame == null) {
+            Debug.Log("No OptiFrame.");
+        }
+        else {
+            Debug.Log("OptiFrame found.");
+            if (frame.countMarker() > 0) {
+                Debug.Log("marker = " + frame.getMarker(0));
+            }
+            if (frame.countMarker() > 0) {
+                Debug.Log("rigidBody = " + frame.getRigidBody(0));
+            }
+        }
     }
 
     void controlWithKeyboard() {
@@ -38,17 +56,6 @@ public class PlayerController : NetworkBehaviour {
         if (Input.GetButtonDown("Fire1")) {
             CmdFire();
         }
-
-        /*float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * 5.0f;
-        float rotationY = transform.localEulerAngles.x - Input.GetAxis("Mouse Y") * 5.0f;
-        if (rotationY > 180.0f) {
-            rotationY -= 360.0f;
-        }
-        rotationY = Mathf.Clamp(rotationY, -60.0f, 60.0f);
-        transform.localEulerAngles = new Vector3(rotationY, rotationX, 0);
-
-        float z = Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 200f;
-        transform.Translate(0, 0, z);*/
     }
 
     [Command]

@@ -26,16 +26,9 @@ public class PlayerController : NetworkBehaviour {
 
     void calibratePosition() {
         OptiFrame frame = GetComponent<OptiTrack>().getFrame();
-        if (frame == null) {
-            Debug.Log("No OptiFrame.");
-        }
-        else {
-            Debug.Log("OptiFrame found.");
+        if (frame != null) {
             if (frame.countMarker() > 0) {
-                Debug.Log("marker = " + frame.getMarker(0));
-            }
-            if (frame.countMarker() > 0) {
-                Debug.Log("rigidBody = " + frame.getRigidBody(0));
+                transform.position = (transform.position + frame.getMarker(0)) / 2;
             }
         }
     }

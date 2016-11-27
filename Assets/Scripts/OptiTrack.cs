@@ -7,7 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 
 public class OptiTrack : MonoBehaviour {
-    const string SERVER_IP = "192.168.0.109";
+    const string SERVER_IP = "192.168.1.124";
     const int SERVER_PORT = 7643;
 
     private TcpClient socket;
@@ -46,13 +46,13 @@ public class OptiTrack : MonoBehaviour {
                     currFrame = frame;
                     break;
                 case "rbposition":
-                    frame.addRigidBody(new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
+                    frame.addRigidBody(new Vector3(float.Parse(args[1]), float.Parse(args[2]), -float.Parse(args[3])));
                     break;
                 case "rbrotation":
                     frame.setRigidBodyRotation(new Vector4(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4])));
                     break;
                 case "othermarker":
-                    frame.addMarker(new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
+                    frame.addMarker(new Vector3(float.Parse(args[1]), float.Parse(args[2]), -float.Parse(args[3])));
                     break;
             }
         }
@@ -64,5 +64,9 @@ public class OptiTrack : MonoBehaviour {
 	
     public OptiFrame getFrame() {
         return currFrame;
+    }
+
+    void OnDestory() {
+        socket.Close();
     }
 }

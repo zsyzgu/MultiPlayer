@@ -33,5 +33,13 @@ namespace UnityEngine.Networking {
                 }
             }
         }
+        
+        bool isClient() {
+            return (client != null);
+        }
+
+        static public bool isPlayer0() {
+            return !GameObject.Find("Network Manager").GetComponent<NetManager>().isClient();
+        }
     }
 };

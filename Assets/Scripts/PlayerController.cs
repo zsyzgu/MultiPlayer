@@ -21,14 +21,15 @@ public class PlayerController : NetworkBehaviour {
             controlWithHead();
         }
 
-        calibratePosition();
+        calibrateTransform();
     }
 
-    void calibratePosition() {
+    void calibrateTransform() {
         OptiFrame frame = GetComponent<OptiTrack>().getFrame();
         if (frame != null) {
             if (frame.countMarker() > 0) {
-                transform.position = (transform.position + frame.getMarker(0)) / 2;
+                float smoothRate = 0.5f;
+                transform.position = transform.position * smoothRate + frame.getMarker(0) * (1 - smoothRate);
             }
         }
     }

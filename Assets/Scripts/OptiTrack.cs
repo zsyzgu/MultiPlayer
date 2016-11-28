@@ -15,19 +15,24 @@ public class OptiTrack : MonoBehaviour {
     private OptiFrame currFrame = null;
 
     private void connect() {
-        try {
-            socket = new TcpClient();
-            socket.Connect(SERVER_IP, SERVER_PORT);
-        } catch (Exception e) {
-            Debug.Log(e);
-        }
-        if (socket.Connected) {
-            Thread thread = new Thread(receiveThread);
-            thread.Start();
-        }
+        Thread thread = new Thread(receiveThread);
+        thread.Start();
+        
     }
 
     private void receiveThread() {
+        try {
+            socket = new TcpClient();
+            socket.Connect(SERVER_IP, SERVER_PORT);
+        }
+        catch (Exception e) {
+            Debug.Log(e);
+        }
+
+        if (socket.Connected == false) {
+            return;
+        }
+
         StreamReader streamReader = new StreamReader(socket.GetStream());
         OptiFrame frame = null;
         

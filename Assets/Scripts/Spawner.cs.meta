@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ff1929f1a2f5cad498ec7871d4402dd3
+timeCreated: 1480337050
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - tankPrefab: {fileID: 1000014117242918, guid: 78e10746f317a654e9803b8991357598,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -2,12 +2,16 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class PlayerController : NetworkBehaviour {
+public class PlayerControl : UnitControl {
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
 
 	void Start () {
-	
+        if (NetManager.isPlayer0() ^ isLocalPlayer) {
+            player = 1;
+        } else {
+            player = 0;
+        }
 	}
 	
 	void Update () {
@@ -16,7 +20,7 @@ public class PlayerController : NetworkBehaviour {
         }
 
         if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
-            controlWithKeyboard();
+            controlWithDesktop();
         } else if (Application.platform == RuntimePlatform.Android) {
             controlWithHead();
         }
@@ -34,14 +38,22 @@ public class PlayerController : NetworkBehaviour {
         }
     }
 
-    void controlWithKeyboard() {
-        float x = Input.GetAxis("Horizontal") * Time.deltaTime * 150.0f;
+    void controlWithDesktop() {
+        float x = Input.GetAxis("Horizontal") * Time.deltaTime * 3.0f;
         float z = Input.GetAxis("Vertical") * Time.deltaTime * 3.0f;
+        transform.Translate(x, 0, z);
 
-        transform.Rotate(0, x, 0);
-        transform.Translate(0, 0, z);
+        float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * 5.0f;
+        float rotationY = transform.localEulerAngles.x - Input.GetAxis("Mouse Y") * 5.0f;
+        if (rotationY > 180.0f) {
+            rotationY -= 360.0f;
+        }
+        rotationY = Mathf.Clamp(rotationY, -60.0f, 60.0f);
+        transform.localEulerAngles = new Vector3(rotationY, rotationX, 0);
+        float roatationZ = Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 200f;
+        transform.Translate(0, 0, roatationZ);
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1")) {
             CmdFire();
         }
     }

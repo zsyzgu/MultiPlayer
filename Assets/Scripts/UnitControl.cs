@@ -3,11 +3,11 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class Health : NetworkBehaviour {
+public class UnitControl : NetworkBehaviour {
     const int MAX_HEALTH = 100;
     [SyncVar (hook = "onChangeHealth")] public int currentHealth = MAX_HEALTH;
-    public RectTransform healthBar;
     public bool destroyOnDeath;
+    public int player;
 
     public void takeDamage(int amount) {
         if (isServer == false) {

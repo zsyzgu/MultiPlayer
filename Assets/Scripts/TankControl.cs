@@ -16,6 +16,13 @@ public class TankControl : UnitControl {
     private Vector3 targetPos;
     private GameObject targetObj;
     private GameObject battery;
+    private Transform bulletSpawner;
+
+    private AudioSource tankMoveSound;
+    private AudioSource batteryRotateSound;
+
+    private bool rotated = false;
+    private bool moved = false;
 
 	void Start () {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
@@ -37,10 +44,12 @@ public class TankControl : UnitControl {
         }
         foreach (Transform child in battery.transform) {
             if (child.gameObject.name == "BulletSpawner") {
-                bulletSpawn = child;
+                bulletSpawner = child;
                 break;
             }
         }
+        tankMoveSound = GetComponent<AudioSource>();
+        batteryRotateSound = battery.GetComponent<AudioSource>();
     }
 	
 	new void Update () {
@@ -52,7 +61,31 @@ public class TankControl : UnitControl {
 
         lookForTarget();
         act();
+        playSound();
 	}
+
+    void playSound() {
+        if (moved) {
+            if (!tankMoveSound.isPlaying) {
+                tankMoveSound.Play();
+            }
+        } else {
+            if (tankMoveSound.isPlaying) {
+                tankMoveSound.Stop();
+            }
+        }
+        if (rotated) {
+            if (!batteryRotateSound.isPlaying) {
+                batteryRotateSound.Play();
+            }
+        } else {
+            if (batteryRotateSound.isPlaying) {
+                batteryRotateSound.Stop();
+            }
+        }
+        moved = false;
+        rotated = false;
+    }
 
     void lookForTarget() {
         if (targetObj != null) {
@@ -140,10 +173,12 @@ public class TankControl : UnitControl {
         if (Mathf.Abs(angle) <= 90) {
             CmdMove(Mathf.Min(dist, speed * Time.deltaTime));
             angle = calnAngle(battery.transform.forward, transform.forward);
-            if (angle < 0) {
-                CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
-            } else if (angle > 0) {
-                CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+            if (angle != 0) {
+                if (angle < 0) {
+                    CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+                } else {
+                    CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+                }
             }
         }
         return false;
@@ -151,23 +186,27 @@ public class TankControl : UnitControl {
 
     [Command]
     void CmdFire() {
-        GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+        GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, bulletSpawner.rotation);
         bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * bulletSpeed;
         NetworkServer.Spawn(bullet);
+        bulletSpawner.GetComponent<AudioSource>().Play();
     }
 
     [Command]
     void CmdRoate(float angle) {
+        moved = true;
         transform.Rotate(0, angle, 0);
     }
 
     [Command]
     void CmdBatteryRotate(float angle) {
+        rotated = true;
         battery.transform.Rotate(0, angle, 0);
     }
 
     [Command]
     void CmdMove(float dist) {
+        moved = true;
         transform.Translate(0, 0, dist);
     }
 }

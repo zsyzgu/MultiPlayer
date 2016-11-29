@@ -7,27 +7,45 @@ public class TankControl : UnitControl {
     private float range;
     private float speed;
     private float angularSpeed;
-    private int attack;
+    private float batteryAngularSpeed;
+    private float bulletSpeed;
 
     private Vector2 mapPos;
     private Vector2 mapSize;
 
     private Vector3 targetPos;
     private GameObject targetObj;
+    private GameObject battery;
 
 	void Start () {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
         mapPos = info.getPos();
         mapSize = info.getSize();
         float mapScale = mapSize.magnitude;
-        view = mapScale * 0.5f;
-        range = mapScale * 0.3f;
+        view = mapScale * 0.3f;
+        range = mapScale * 0.2f;
         speed = mapScale * 0.01f;
-        angularSpeed = 45f;
-        attack = 80;
-	}
+        angularSpeed = 20f;
+        batteryAngularSpeed = 30f;
+        timeInterval = 4f;
+        bulletSpeed = 100f;
+        foreach (Transform child in transform) {
+            if (child.gameObject.name == "Battery") {
+                battery = child.gameObject;
+                break;
+            }
+        }
+        foreach (Transform child in battery.transform) {
+            if (child.gameObject.name == "BulletSpawner") {
+                bulletSpawn = child;
+                break;
+            }
+        }
+    }
 	
-	void Update () {
+	new void Update () {
+        base.Update();
+
         if (isServer == false) {
             return;
         }
@@ -44,7 +62,7 @@ public class TankControl : UnitControl {
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
         float minDist = 1e9f;
         for (int i = 0; i < units.Length; i++) {
-            if (units[i].GetComponent<TankControl>() != null && units[i] != gameObject) {
+            if (units[i].GetComponent<TankControl>() != null && units[i].GetComponent<TankControl>().player != player) {
                 float dist = Vector3.Distance(transform.position, units[i].transform.position);
                 if (dist < view && dist < minDist) {
                     minDist = dist;
@@ -59,7 +77,7 @@ public class TankControl : UnitControl {
 
         float maxDot = -1f;
         for (int i = 0; i < 10; i++) {
-            Vector3 pos = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.1f, mapPos.x + mapSize.x * 0.9f), 0.0f, Random.Range(mapPos.y + mapSize.y * 0.1f, mapPos.y + mapSize.y * 0.9f));
+            Vector3 pos = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.2f, mapPos.x + mapSize.x * 0.8f), 0.0f, Random.Range(mapPos.y + mapSize.y * 0.2f, mapPos.y + mapSize.y * 0.8f));
             Vector3 direction = (pos - transform.position).normalized;
             float dot = Vector3.Dot(transform.forward, direction);
             if (dot > maxDot) {
@@ -73,7 +91,7 @@ public class TankControl : UnitControl {
         if (targetObj != null) {
             float dist = Vector3.Distance(transform.position, targetObj.transform.position);
             if (dist < range) {
-                fire(targetObj.transform.position);
+                fireAt(targetObj.transform.position);
             } else {
                 moveTo(targetObj.transform.position);
             }
@@ -84,31 +102,68 @@ public class TankControl : UnitControl {
         }
     }
 
-    void fire(Vector3 pos) {
-        moveTo(pos);
+    void fireAt(Vector3 pos) {
+        float angle = calnAngle(battery.transform.forward, pos - transform.position);
+        if (Mathf.Abs(angle) <= 0.1f) {
+            if (canFire()) {
+                resetCd();
+                CmdFire();
+            }
+        } else {
+            if (angle < 0) {
+                CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+            } else if (angle > 0) {
+                CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+            }
+        }
+    }
+
+    float calnAngle(Vector3 from, Vector3 to) {
+        from.Normalize();
+        to.Normalize();
+        Vector2 to2D = new Vector2(to.x, to.z);
+        Vector2 from2D = new Vector2(from.x, from.z);
+        return Vector2.Angle(from2D, to2D) * (Vector3.Dot(Vector3.up, Vector3.Cross(from, to)) < 0 ? -1 : 1);
     }
 
     bool moveTo(Vector3 pos) {
         float dist = Vector3.Distance(transform.position, pos);
-        if (dist < 1f) {
+        if (dist < 0.1f) {
             return true;
         }
-        Vector3 direction = (pos - transform.position).normalized;
-        Vector2 direction2D = new Vector2(direction.x, direction.z);
-        Vector2 forward2D = new Vector2(transform.forward.x, transform.forward.z);
-        float angle = Vector2.Angle(forward2D, direction) * (Vector3.Dot(Vector3.up, Vector3.Cross(transform.forward, direction)) < 0 ? -1 : 1);
+        float angle = calnAngle(transform.forward, pos - transform.position);
         if (angle < 0) {
             CmdRoate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
         } else if (angle > 0) {
             CmdRoate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
         }
-        CmdMove(Mathf.Min(dist, speed * Time.deltaTime));
+        if (Mathf.Abs(angle) <= 90) {
+            CmdMove(Mathf.Min(dist, speed * Time.deltaTime));
+            angle = calnAngle(battery.transform.forward, transform.forward);
+            if (angle < 0) {
+                CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+            } else if (angle > 0) {
+                CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+            }
+        }
         return false;
+    }
+
+    [Command]
+    void CmdFire() {
+        GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * bulletSpeed;
+        NetworkServer.Spawn(bullet);
     }
 
     [Command]
     void CmdRoate(float angle) {
         transform.Rotate(0, angle, 0);
+    }
+
+    [Command]
+    void CmdBatteryRotate(float angle) {
+        battery.transform.Rotate(0, angle, 0);
     }
 
     [Command]

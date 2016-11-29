@@ -3,10 +3,13 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class PlayerControl : UnitControl {
-    public GameObject bulletPrefab;
-    public Transform bulletSpawn;
-
 	void Start () {
+        foreach (Transform child in transform) {
+            if (child.gameObject.name == "BulletSpawner") {
+                bulletSpawn = child;
+                break;
+            }
+        }
         if (NetManager.isPlayer0() ^ isLocalPlayer) {
             player = 1;
         } else {
@@ -14,7 +17,9 @@ public class PlayerControl : UnitControl {
         }
 	}
 	
-	void Update () {
+	new void Update() {
+        base.Update();
+
         if (isLocalPlayer == false) {
             return;
         }
@@ -48,7 +53,7 @@ public class PlayerControl : UnitControl {
         if (rotationY > 180.0f) {
             rotationY -= 360.0f;
         }
-        rotationY = Mathf.Clamp(rotationY, -60.0f, 60.0f);
+        rotationY = Mathf.Clamp(rotationY, -80.0f, 80.0f);
         transform.localEulerAngles = new Vector3(rotationY, rotationX, 0);
         float roatationZ = Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 200f;
         transform.Translate(0, 0, roatationZ);
@@ -69,7 +74,6 @@ public class PlayerControl : UnitControl {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
         bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6.0f;
         NetworkServer.Spawn(bullet);
-        Destroy(bullet, 2.0f);
     }
 
     public override void OnStartLocalPlayer() {

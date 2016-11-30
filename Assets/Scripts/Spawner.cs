@@ -6,6 +6,23 @@ public class Spawner : NetworkBehaviour {
     public GameObject tankPrefab;
 
     public override void OnStartServer() {
+        spawn();
+    }
+
+    void Update() {
+        int tankCnt = 0;
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+        foreach (GameObject unit in units) {
+            if (unit.GetComponent<TankControl>() != null) {
+                tankCnt++;
+            }
+        }
+        if (tankCnt == 0) {
+            spawn();
+        }
+    }
+
+    void spawn() {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
         Vector2 mapPos = info.getPos();
         Vector2 mapSize = info.getSize();

@@ -72,12 +72,13 @@ public class PlayerControl : UnitControl {
     [Command]
     void CmdFire() {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 6.0f;
+        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * 100.0f;
         NetworkServer.Spawn(bullet);
     }
 
     public override void OnStartLocalPlayer() {
         GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f, 0.1f);
         GetComponent<Camera>().enabled = true;
+        GetComponent<AudioListener>().enabled = true;
     }
 }

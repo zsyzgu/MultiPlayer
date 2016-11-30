@@ -155,9 +155,9 @@ public class TankControl : UnitControl {
             }
         } else {
             if (angle < 0) {
-                CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+                CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
             } else if (angle > 0) {
-                CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+                CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
     }
@@ -186,9 +186,9 @@ public class TankControl : UnitControl {
             angle = calnAngle(battery.transform.forward, transform.forward);
             if (angle != 0) {
                 if (angle < 0) {
-                    CmdBatteryRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+                    CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
                 } else {
-                    CmdBatteryRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
+                    CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
                 }
             }
         }

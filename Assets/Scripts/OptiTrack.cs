@@ -11,7 +11,6 @@ public class OptiTrack : MonoBehaviour {
     const int SERVER_PORT = 7643;
 
     private TcpClient socket;
-    private int frameId = 0;
     private OptiFrame currFrame = null;
 
     private void connect() {
@@ -20,13 +19,8 @@ public class OptiTrack : MonoBehaviour {
     }
 
     private void receiveThread() {
-        try {
-            socket = new TcpClient();
-            socket.Connect(SERVER_IP, SERVER_PORT);
-        }
-        catch (Exception e) {
-            Debug.Log(e);
-        }
+        socket = new TcpClient();
+        socket.Connect(SERVER_IP, SERVER_PORT);
 
         if (socket.Connected == false) {
             return;
@@ -43,20 +37,19 @@ public class OptiTrack : MonoBehaviour {
             string[] args = line.Split(' ');
             switch (args[0]) {
                 case "framestart":
-                    frameId++;
                     frame = new OptiFrame();
                     break;
                 case "frameend":
                     currFrame = frame;
                     break;
                 case "rbposition":
-                    frame.addRigidBody(new Vector3(float.Parse(args[1]), float.Parse(args[2]), -float.Parse(args[3])));
+                    frame.addRigidBody(new Vector3(-float.Parse(args[1]), -float.Parse(args[2]), -float.Parse(args[3])));
                     break;
                 case "rbrotation":
                     frame.setRigidBodyRotation(new Vector4(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4])));
                     break;
                 case "othermarker":
-                    frame.addMarker(new Vector3(float.Parse(args[1]), float.Parse(args[2]), -float.Parse(args[3])));
+                    frame.addMarker(new Vector3(-float.Parse(args[1]), -float.Parse(args[2]), -float.Parse(args[3])));
                     break;
             }
         }

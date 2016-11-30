@@ -24,6 +24,8 @@ public class TankControl : UnitControl {
     private bool rotated = false;
     private bool moved = false;
 
+    public GameObject destroyEffect;
+
 	void Start () {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
         mapPos = info.getPos();
@@ -62,7 +64,14 @@ public class TankControl : UnitControl {
         lookForTarget();
         act();
         playSound();
+        selfDestruction();
 	}
+
+    void selfDestruction() {
+        if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
+            takeDamage(100);
+        }
+    }
 
     void playSound() {
         if (moved) {
@@ -122,8 +131,10 @@ public class TankControl : UnitControl {
 
     void act() {
         if (targetObj != null) {
-            float dist = Vector3.Distance(transform.position, targetObj.transform.position);
-            if (dist < range) {
+            float dist = Vector3.Distance(bulletSpawner.position, targetObj.transform.position);
+            Ray ray = new Ray(bulletSpawner.position, (targetObj.transform.position - bulletSpawner.position).normalized);
+            RaycastHit hitInfo;
+            if (Physics.Raycast(ray, out hitInfo) && hitInfo.collider.gameObject == targetObj && dist < range) {
                 fireAt(targetObj.transform.position);
             } else {
                 moveTo(targetObj.transform.position);
@@ -140,7 +151,7 @@ public class TankControl : UnitControl {
         if (Mathf.Abs(angle) <= 0.1f) {
             if (canFire()) {
                 resetCd();
-                CmdFire();
+                CmdFire(pos);
             }
         } else {
             if (angle < 0) {
@@ -184,10 +195,15 @@ public class TankControl : UnitControl {
         return false;
     }
 
+    public override void destroy() {
+        Instantiate(destroyEffect, transform.position, new Quaternion());
+    }
+
     [Command]
-    void CmdFire() {
+    void CmdFire(Vector3 targetPos) {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, bulletSpawner.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * bulletSpeed;
+        bullet.GetComponent<Bullet>().setExplodeDist(Vector3.Distance(bulletSpawner.position, targetPos));
+        bullet.GetComponent<Rigidbody>().velocity = (targetPos - bulletSpawner.position).normalized * bulletSpeed;
         NetworkServer.Spawn(bullet);
         bulletSpawner.GetComponent<AudioSource>().Play();
     }

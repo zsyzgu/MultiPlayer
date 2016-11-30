@@ -37,7 +37,7 @@ public class Spawner : NetworkBehaviour {
                 z = Random.Range(mapPos.y + mapSize.y * 0.7f, mapPos.y + mapSize.y * 0.9f);
                 rot = 180f;
             }
-            Vector3 spawnPosition = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.2f, mapPos.x + mapSize.x * 0.8f), 0.0f, z);
+            Vector3 spawnPosition = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.2f, mapPos.x + mapSize.x * 0.8f), 1.0f, z);
             Quaternion spawnRotation = Quaternion.Euler(0.0f, rot, 0.0f);
 
             GameObject tank = (GameObject)Instantiate(tankPrefab, spawnPosition, spawnRotation);

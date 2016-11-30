@@ -11,6 +11,7 @@ public class Bullet : MonoBehaviour {
     void Start() {
         Destroy(gameObject, 10.0f);
         maxDist = -1f;
+        startPos = transform.position;
     }
 
     void Update() {
@@ -21,8 +22,7 @@ public class Bullet : MonoBehaviour {
         }
     }
 
-    public void setExplodeDist(Vector3 startPos, float maxDist) {
-        this.startPos = startPos;
+    public void setExplodeDist(float maxDist) {
         this.maxDist = maxDist;
     }
 

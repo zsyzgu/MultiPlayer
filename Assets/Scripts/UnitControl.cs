@@ -33,12 +33,17 @@ public class UnitControl : NetworkBehaviour {
         currentHealth -= amount;
         if (currentHealth <= 0) {
             if (destroyOnDeath) {
+                destroy();
                 Destroy(gameObject);
             } else {
                 currentHealth = MAX_HEALTH;
                 RpcRespawn();
             }
         }
+    }
+
+    public virtual void destroy() {
+
     }
 
     void onChangeHealth(int health) {

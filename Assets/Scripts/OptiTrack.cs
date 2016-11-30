@@ -17,7 +17,6 @@ public class OptiTrack : MonoBehaviour {
     private void connect() {
         Thread thread = new Thread(receiveThread);
         thread.Start();
-        
     }
 
     private void receiveThread() {

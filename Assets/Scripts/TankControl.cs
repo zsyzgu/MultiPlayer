@@ -206,7 +206,6 @@ public class TankControl : UnitControl {
     [Command]
     void CmdFire(Vector3 targetPos) {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, bulletSpawner.rotation);
-        bullet.GetComponent<Bullet>().setExplodeDist(Vector3.Distance(bulletSpawner.position, targetPos));
         bullet.GetComponent<Rigidbody>().velocity = (targetPos - bulletSpawner.position).normalized * bulletSpeed;
         NetworkServer.Spawn(bullet);
         bulletSpawner.GetComponent<AudioSource>().Play();

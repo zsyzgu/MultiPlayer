@@ -132,9 +132,9 @@ public class TankControl : UnitControl {
     void act() {
         if (targetObj != null) {
             float dist = Vector3.Distance(bulletSpawner.position, targetObj.transform.position);
-            Ray ray = new Ray(bulletSpawner.position, (targetObj.transform.position - bulletSpawner.position).normalized);
-            RaycastHit hitInfo;
-            if (Physics.Raycast(ray, out hitInfo) && hitInfo.collider.gameObject == targetObj && dist < range) {
+            //Ray ray = new Ray(bulletSpawner.position, (targetObj.transform.position - bulletSpawner.position).normalized);
+            //RaycastHit hitInfo;
+            if (/*Physics.Raycast(ray, out hitInfo) && hitInfo.collider.gameObject == targetObj && */dist < range) {
                 fireAt(targetObj.transform.position);
             } else {
                 moveTo(targetObj.transform.position);
@@ -148,7 +148,7 @@ public class TankControl : UnitControl {
 
     void fireAt(Vector3 pos) {
         float angle = calnAngle(battery.transform.forward, pos - transform.position);
-        if (Mathf.Abs(angle) <= 0.1f) {
+        if (Mathf.Abs(angle) <= 1f) {
             if (canFire()) {
                 resetCd();
                 CmdFire(pos);
@@ -176,9 +176,9 @@ public class TankControl : UnitControl {
             return true;
         }
         float angle = calnAngle(transform.forward, pos - transform.position);
-        if (angle < 0) {
+        if (angle < -1f) {
             CmdRoate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
-        } else if (angle > 0) {
+        } else if (angle > 1f) {
             CmdRoate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
         }
         if (Mathf.Abs(angle) <= 90) {

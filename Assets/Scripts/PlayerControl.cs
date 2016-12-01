@@ -56,6 +56,7 @@ public class PlayerControl : UnitControl {
         if (track != null) {
             Vector3 targetPos = track.getPlayerPos(player);
             if (targetPos != Vector3.zero) {
+                Debug.Log(targetPos);
                 moveTo(targetPos * 100f);
             }
         }

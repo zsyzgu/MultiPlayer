@@ -3,15 +3,20 @@ namespace UnityEngine.Networking {
     [RequireComponent(typeof(NetworkManager))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class NetManager : MonoBehaviour {
-        //const string SERVER_IP = "192.168.1.133";
-        const string SERVER_IP = "192.168.1.163";
+        const string SERVER_IP = "";
         const float TIMEOUT = 1.0f;
+        private string serverIP;
         private NetworkManager manager;
         private NetworkClient client = null;
         private float waitTime = 0.0f;
 
         void Awake() {
             manager = GetComponent<NetworkManager>();
+            if (SERVER_IP == "") {
+                serverIP = Network.player.ipAddress;
+            } else {
+                serverIP = SERVER_IP;
+            }
         }
 
         void Update() {
@@ -20,7 +25,7 @@ namespace UnityEngine.Networking {
             }
 
             if (!(client != null && client.isConnected) && !NetworkServer.active) {
-                manager.networkAddress = SERVER_IP;
+                manager.networkAddress = serverIP;
 
                 if (client == null) {
                     client = manager.StartClient();

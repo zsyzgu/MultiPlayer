@@ -6,10 +6,11 @@ public class PlayerControl : UnitControl {
     private GameObject eye;
 	
     void Start() {
-        if (isLocalPlayer == false) {
-            return;
+        if (NetManager.isPlayer0() ^ isLocalPlayer) {
+            player = 1;
+        } else {
+            player = 0;
         }
-
         foreach (Transform child in transform) {
             if (child.gameObject.name == "Camera") {
                 eye = child.gameObject;
@@ -22,12 +23,13 @@ public class PlayerControl : UnitControl {
                 break;
             }
         }
-        if (NetManager.isPlayer0() ^ isLocalPlayer) {
-            player = 1;
+
+        if (isLocalPlayer == false) {
+            return;
         }
-        else {
-            player = 0;
-        }
+        
+        eye.GetComponent<Camera>().enabled = true;
+        GetComponent<AudioListener>().enabled = true;
     }
 
 	new void Update() {
@@ -68,7 +70,7 @@ public class PlayerControl : UnitControl {
         }
         rotationY = Mathf.Clamp(rotationY, -80.0f, 80.0f);
         eye.transform.localEulerAngles = new Vector3(rotationY, rotationX, 0);
-
+        
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire1")) {
             CmdFire();
         }
@@ -79,7 +81,7 @@ public class PlayerControl : UnitControl {
             CmdFire();
         }
     }
-
+    
     [Command]
     void CmdFire() {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
@@ -93,8 +95,6 @@ public class PlayerControl : UnitControl {
     }
 
     public override void OnStartLocalPlayer() {
-        GetComponent<Renderer>().material.color = new Color(0.0f, 0.0f, 0.0f, 0.1f);
-        eye.GetComponent<Camera>().enabled = true;
-        GetComponent<AudioListener>().enabled = true;
+
     }
 }

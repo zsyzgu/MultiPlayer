@@ -30,6 +30,9 @@ public class PlayerControl : UnitControl {
         
         eye.GetComponent<Camera>().enabled = true;
         GetComponent<AudioListener>().enabled = true;
+        if (player == 1) {
+            eye.transform.eulerAngles = new Vector3(0f, 180f, 0f);
+        }
     }
 
 	new void Update() {
@@ -49,11 +52,11 @@ public class PlayerControl : UnitControl {
     }
 
     void calibrateTransform() {
-        OptiFrame frame = GetComponent<OptiTrack>().getFrame();
-        if (frame != null) {
-            if (frame.countMarker() > 0) {
-                Vector3 targetPos = frame.getMarker(0) * 100f;
-                moveTo(targetPos);
+        OptiTrack track = GetComponent<OptiTrack>();
+        if (track != null) {
+            Vector3 targetPos = track.getPlayerPos(player);
+            if (targetPos != Vector3.zero) {
+                moveTo(targetPos * 100f);
             }
         }
     }

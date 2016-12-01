@@ -43,13 +43,13 @@ public class OptiTrack : MonoBehaviour {
                     currFrame = frame;
                     break;
                 case "rbposition":
-                    frame.addRigidBody(new Vector3(-float.Parse(args[1]), -float.Parse(args[2]), -float.Parse(args[3])));
+                    frame.addRigidBody(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
                     break;
                 case "rbrotation":
                     frame.setRigidBodyRotation(new Vector4(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4])));
                     break;
                 case "othermarker":
-                    frame.addMarker(new Vector3(-float.Parse(args[1]), -float.Parse(args[2]), -float.Parse(args[3])));
+                    frame.addMarker(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
                     break;
             }
         }
@@ -61,6 +61,29 @@ public class OptiTrack : MonoBehaviour {
 	
     public OptiFrame getFrame() {
         return currFrame;
+    }
+
+    public Vector3 getPlayerPos(int player) {
+        Vector3 pos = Vector3.zero;
+        if (currFrame == null || currFrame.countMarker() == 0) {
+            return pos;
+        }
+        if (player == 0) {
+            pos = new Vector3(0f, 0f, 1e9f);
+            for (int i = 0; i < currFrame.countMarker(); i++) {
+                if (currFrame.getMarker(i).z < pos.z) {
+                    pos = currFrame.getMarker(i);
+                }
+            }
+        } else if (player == 1) {
+            pos = new Vector3(0f, 0f, -1e9f);
+            for (int i = 0; i < currFrame.countMarker(); i++) {
+                if (currFrame.getMarker(i).z > pos.z) {
+                    pos = currFrame.getMarker(i);
+                }
+            }
+        }
+        return pos;
     }
 
     void OnDestory() {

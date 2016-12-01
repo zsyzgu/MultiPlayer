@@ -31,10 +31,10 @@ public class TankControl : UnitControl {
         mapPos = info.getPos();
         mapSize = info.getSize();
         float mapScale = mapSize.magnitude;
-        view = mapScale * 0.3f;
+        view = mapScale * 0.25f;
         range = mapScale * 0.2f;
         speed = mapScale * 0.01f;
-        angularSpeed = 20f;
+        angularSpeed = 15f;
         batteryAngularSpeed = 30f;
         timeInterval = 4f;
         bulletSpeed = 100f;
@@ -154,9 +154,9 @@ public class TankControl : UnitControl {
                 CmdFire(pos);
             }
         } else {
-            if (angle < 0) {
+            if (angle < -1f) {
                 CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            } else if (angle > 0) {
+            } else if (angle > 1f) {
                 CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
@@ -184,19 +184,23 @@ public class TankControl : UnitControl {
         if (Mathf.Abs(angle) <= 90) {
             CmdMove(Mathf.Min(dist, speed * Time.deltaTime));
             angle = calnAngle(battery.transform.forward, transform.forward);
-            if (angle != 0) {
-                if (angle < 0) {
-                    CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-                } else {
-                    CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
-                }
+            if (angle < -1f) {
+                CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
+            } else if (angle > 1f) {
+                CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
         return false;
     }
-
+    
     public override void destroy() {
-        Instantiate(destroyEffect, transform.position, new Quaternion());
+        CmdDestroy();
+    }
+
+    [Command]
+    void CmdDestroy() {
+        GameObject effect = (GameObject)Instantiate(destroyEffect, transform.position, new Quaternion());
+        NetworkServer.Spawn(effect);
     }
 
     [Command]

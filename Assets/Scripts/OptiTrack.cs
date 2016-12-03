@@ -28,6 +28,8 @@ public class OptiTrack : MonoBehaviour {
 
         StreamReader streamReader = new StreamReader(socket.GetStream());
         OptiFrame frame = null;
+        int rbID = 0;
+        List<Vector3> posList = null;
         
         while (true) {
             string line = streamReader.ReadLine();
@@ -42,14 +44,16 @@ public class OptiTrack : MonoBehaviour {
                 case "frameend":
                     currFrame = frame;
                     break;
+                case "rbstart":
+                    posList = new List<Vector3>();
+                    rbID = int.Parse(args[1]);
+                    break;
+                case "rbend":
+                    frame.addRb(rbID, posList);
+                    posList.Clear();
+                    break;
                 case "rbposition":
-                    frame.addRigidBody(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
-                    break;
-                case "rbrotation":
-                    frame.setRigidBodyRotation(new Vector4(float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3]), float.Parse(args[4])));
-                    break;
-                case "othermarker":
-                    frame.addMarker(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
+                    posList.Add(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
                     break;
             }
         }
@@ -65,23 +69,16 @@ public class OptiTrack : MonoBehaviour {
 
     public Vector3 getPlayerPos(int player) {
         Vector3 pos = Vector3.zero;
-        if (currFrame == null || currFrame.countMarker() == 0) {
-            return pos;
+        if (currFrame != null) {
+            pos = currFrame.getPos(player + 1);
         }
-        if (player == 0) {
-            pos = new Vector3(0f, 0f, 1e9f);
-            for (int i = 0; i < currFrame.countMarker(); i++) {
-                if (currFrame.getMarker(i).z < pos.z) {
-                    pos = currFrame.getMarker(i);
-                }
-            }
-        } else if (player == 1) {
-            pos = new Vector3(0f, 0f, -1e9f);
-            for (int i = 0; i < currFrame.countMarker(); i++) {
-                if (currFrame.getMarker(i).z > pos.z) {
-                    pos = currFrame.getMarker(i);
-                }
-            }
+        return pos;
+    }
+
+    public Vector3 getPlayerDir(int player) {
+        Vector3 pos = Vector3.zero;
+        if (currFrame != null) {
+            pos = currFrame.getDir(player + 1);
         }
         return pos;
     }

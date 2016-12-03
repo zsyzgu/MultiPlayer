@@ -3,45 +3,51 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class OptiFrame {
-    private List<Vector3> rbList;
-    private Vector4 rbRotation;
-    private List<Vector3> mkList;
+    private List<int> idList;
+    private List<Vector3> posList;
+    private List<Vector3> dirList;
 
     public OptiFrame() {
-        rbList = new List<Vector3>();
-        rbRotation = new Vector4();
-        mkList = new List<Vector3>();
+        idList = new List<int>();
+        posList = new List<Vector3>();
+        dirList = new List<Vector3>();
     }
 
-    public int countMarker() {
-        return mkList.Count;
+    public int count() {
+        return idList.Count;
     }
 
-    public int countRigidBody() {
-        return rbList.Count;
+    public void addRb(int rbID, Vector3 pos, Vector3 dir) {
+        idList.Add(rbID);
+        posList.Add(pos);
+        dirList.Add(dir);
     }
 
-    public void setRigidBodyRotation(Vector4 rotation) {
-        rbRotation = rotation;
+    public void addRb(int rbID, List<Vector3> posList) {
+        if (rbID == 1 || rbID == 2 && posList.Count == 3) {
+            Vector3 dir = Vector3.Cross(posList[1] - posList[0], posList[2] - posList[0]).normalized;
+            Vector3 pos = posList[0] - dir * 0.15f;
+            addRb(rbID, pos, dir);
+        } else {
+
+        }
     }
 
-    public void addMarker(Vector3 marker) {
-        mkList.Add(marker);
+    public Vector3 getPos(int id) {
+        for (int i = 0; i < idList.Count; i++) {
+            if (idList[i] == id) {
+                return posList[i];
+            }
+        }
+        return Vector3.zero;
     }
 
-    public void addRigidBody(Vector3 rb) {
-        rbList.Add(rb);
-    }
-
-    public Vector4 getRigidRodyRotation() {
-        return rbRotation;
-    }
-
-    public Vector3 getMarker(int id) {
-        return mkList[id];
-    }
-
-    public Vector3 getRigidBody(int id) {
-        return rbList[id];
+    public Vector3 getDir(int id) {
+        for (int i = 0; i < idList.Count; i++) {
+            if (idList[i] == id) {
+                return dirList[i];
+            }
+        }
+        return Vector3.zero;
     }
 }

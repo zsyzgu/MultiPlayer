@@ -1,56 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 
 public class CopterControl : UnitControl {
-    private float view;
-    private float range;
-    private float speed;
-    private float angularSpeed;
-    private float batteryAngularSpeed;
-    private float bulletSpeed;
-
-    private Vector2 mapPos;
-    private Vector2 mapSize;
+    private float view = 75f;
+    private float range = 50f;
+    private float speed = 2f;
+    private float angularSpeed = 15f;
+    private float roterAngularSpeed = 720f;
+    private float bulletSpeed = 100f;
+    private float accuracy = 0.5f;
 
     private Vector3 targetPos;
     private GameObject targetObj;
-    private GameObject battery;
+    private GameObject roter;
     private Transform bulletSpawner;
 
     private AudioSource tankMoveSound;
-    private AudioSource batteryRotateSound;
-
-    private bool rotated = false;
-    private bool moved = false;
 
     public GameObject destroyEffect;
 
     void Start() {
-        TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
-        mapPos = info.getPos();
-        mapSize = info.getSize();
-        view = 50f;
-        range = 40f;
-        speed = 2f;
-        angularSpeed = 15f;
-        batteryAngularSpeed = 30f;
-        timeInterval = 4f;
-        bulletSpeed = 100f;
-        foreach (Transform child in transform) {
-            if (child.gameObject.name == "Battery") {
-                battery = child.gameObject;
-                break;
-            }
-        }
-        foreach (Transform child in battery.transform) {
-            if (child.gameObject.name == "BulletSpawner") {
-                bulletSpawner = child;
-                break;
-            }
-        }
+        timeInterval = 0.25f;
+        roter = searchChild(gameObject, "Roter");
+        bulletSpawner = searchChild(gameObject, "BulletSpawner").transform;
         tankMoveSound = GetComponent<AudioSource>();
-        batteryRotateSound = battery.GetComponent<AudioSource>();
+        attackTypes = new List<string>();
+        attackTypes.Add("Tank");
+        attackTypes.Add("Copter");
     }
 
     new void Update() {
@@ -73,61 +51,23 @@ public class CopterControl : UnitControl {
     }
 
     void playSound() {
-        if (moved) {
-            if (!tankMoveSound.isPlaying) {
-                tankMoveSound.Play();
-            }
+        if (!tankMoveSound.isPlaying) {
+            tankMoveSound.Play();
         }
-        else {
-            if (tankMoveSound.isPlaying) {
-                tankMoveSound.Stop();
-            }
-        }
-        if (rotated) {
-            if (!batteryRotateSound.isPlaying) {
-                batteryRotateSound.Play();
-            }
-        }
-        else {
-            if (batteryRotateSound.isPlaying) {
-                batteryRotateSound.Stop();
-            }
-        }
-        moved = false;
-        rotated = false;
     }
 
     void lookForTarget() {
         if (targetObj != null) {
             return;
         }
-
-        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-        float minDist = 1e9f;
-        for (int i = 0; i < units.Length; i++) {
-            if (units[i].GetComponent<TankControl>() != null && units[i].GetComponent<TankControl>().player != player) {
-                float dist = Vector3.Distance(transform.position, units[i].transform.position);
-                if (dist < view && dist < minDist) {
-                    minDist = dist;
-                    targetObj = units[i];
-                }
-            }
-        }
+        
+        targetObj = getNearbyUnit(view, attackTypes);
 
         if (targetObj != null || targetPos != Vector3.zero) {
             return;
         }
 
-        float maxDot = -1f;
-        for (int i = 0; i < 10; i++) {
-            Vector3 pos = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.2f, mapPos.x + mapSize.x * 0.8f), 0.0f, Random.Range(mapPos.y + mapSize.y * 0.2f, mapPos.y + mapSize.y * 0.8f));
-            Vector3 direction = (pos - transform.position).normalized;
-            float dot = Vector3.Dot(transform.forward, direction);
-            if (dot > maxDot) {
-                maxDot = dot;
-                targetPos = pos;
-            }
-        }
+        targetPos = getRandomTargetPos(20f, 50f);
     }
 
     void act() {
@@ -140,65 +80,54 @@ public class CopterControl : UnitControl {
                     targetPos += new Vector3(0f, collider.center.y, 0f);
                 }
                 fireAt(targetPos);
-            }
-            else {
+            } else {
                 moveTo(targetObj.transform.position);
             }
-        }
-        else {
+        } else {
             if (moveTo(targetPos)) {
                 targetPos = Vector3.zero;
             }
         }
+        CmdRoterRotate(roterAngularSpeed * Time.deltaTime);
+        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
     }
 
     void fireAt(Vector3 pos) {
-        float angle = calnAngle(battery.transform.forward, pos - transform.position);
+        float angle = calnAngle(transform.forward, pos - transform.position);
         if (Mathf.Abs(angle) <= 1f) {
             if (canFire()) {
                 resetCd();
                 CmdFire(pos);
             }
-        }
-        else {
+        } else {
             if (angle < -1f) {
-                CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
+                CmdRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
             }
             else if (angle > 1f) {
-                CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
+                CmdRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
             }
         }
-    }
-
-    float calnAngle(Vector3 from, Vector3 to) {
-        from.Normalize();
-        to.Normalize();
-        Vector2 to2D = new Vector2(to.x, to.z);
-        Vector2 from2D = new Vector2(from.x, from.z);
-        return Vector2.Angle(from2D, to2D) * (Vector3.Dot(Vector3.up, Vector3.Cross(from, to)) < 0 ? -1 : 1);
     }
 
     bool moveTo(Vector3 pos) {
+        if (pos.y < 20f) {
+            pos = new Vector3(pos.x, 20f, pos.z);
+        }
         float dist = Vector3.Distance(transform.position, pos);
         if (dist < 0.1f) {
             return true;
         }
         float angle = calnAngle(transform.forward, pos - transform.position);
         if (angle < -1f) {
-            CmdRoate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+            CmdRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
+        } else if (angle > 1f) {
+            CmdRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
         }
-        else if (angle > 1f) {
-            CmdRoate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
-        }
+
+        float upSpeed = Mathf.Clamp(pos.y - transform.position.y, -speed, speed);
+        CmdUp(upSpeed * Time.deltaTime);
         if (Mathf.Abs(angle) <= 90) {
             CmdMove(Mathf.Min(dist, speed * Time.deltaTime));
-            angle = calnAngle(battery.transform.forward, transform.forward);
-            if (angle < -1f) {
-                CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            }
-            else if (angle > 1f) {
-                CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
-            }
         }
         return false;
     }
@@ -216,26 +145,28 @@ public class CopterControl : UnitControl {
     [Command]
     void CmdFire(Vector3 targetPos) {
         GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, bulletSpawner.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = (targetPos - bulletSpawner.position).normalized * bulletSpeed;
+        bullet.GetComponent<Rigidbody>().velocity = (targetPos + randomVector(accuracy) - bulletSpawner.position).normalized * bulletSpeed;
         NetworkServer.Spawn(bullet);
         bulletSpawner.GetComponent<AudioSource>().Play();
     }
 
     [Command]
-    void CmdRoate(float angle) {
-        moved = true;
+    void CmdRotate(float angle) {
         transform.Rotate(0, angle, 0);
     }
 
     [Command]
-    void CmdBatteryRotate(float angle) {
-        rotated = true;
-        battery.transform.Rotate(0, angle, 0);
+    void CmdRoterRotate(float angle) {
+        roter.transform.Rotate(0, angle, 0);
     }
 
     [Command]
     void CmdMove(float dist) {
-        moved = true;
         transform.Translate(0, 0, dist);
+    }
+
+    [Command]
+    void CmdUp(float dist) {
+        transform.Translate(0, dist, 0);
     }
 }

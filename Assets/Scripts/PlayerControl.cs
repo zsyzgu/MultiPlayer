@@ -6,6 +6,8 @@ public class PlayerControl : UnitControl {
     private GameObject eye;
 	
     void Start() {
+        transform.position = new Vector3(50, 50, 50);
+        //
         if (NetManager.isPlayer0() ^ isLocalPlayer) {
             player = 1;
         } else {

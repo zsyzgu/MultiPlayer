@@ -4,20 +4,15 @@ using UnityEngine.Networking;
 
 public class Spawner : NetworkBehaviour {
     public GameObject tankPrefab;
+    public GameObject copterPrefab;
 
     public override void OnStartServer() {
         spawn();
     }
 
     void Update() {
-        int tankCnt = 0;
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-        foreach (GameObject unit in units) {
-            if (unit.GetComponent<TankControl>() != null) {
-                tankCnt++;
-            }
-        }
-        if (tankCnt == 0) {
+        if (units.Length == 0) {
             spawn();
         }
     }
@@ -40,9 +35,19 @@ public class Spawner : NetworkBehaviour {
             Vector3 spawnPosition = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.3f, mapPos.x + mapSize.x * 0.7f), 1.0f, z);
             Quaternion spawnRotation = Quaternion.Euler(0.0f, rot, 0.0f);
 
-            GameObject tank = (GameObject)Instantiate(tankPrefab, spawnPosition, spawnRotation);
-            tank.GetComponent<TankControl>().player = player;
-            NetworkServer.Spawn(tank);
+            float ran = Random.Range(0f, 1f);
+            if (false/*ran < 0.6f*/) {
+                GameObject tank = (GameObject)Instantiate(tankPrefab, spawnPosition, spawnRotation);
+                tank.name = "Tank";
+                tank.GetComponent<TankControl>().player = player;
+                NetworkServer.Spawn(tank);
+            } else {
+                GameObject copter = (GameObject)Instantiate(copterPrefab, spawnPosition, spawnRotation);
+                copter.name = "Copter";
+                copter.GetComponent<CopterControl>().player = player;
+                NetworkServer.Spawn(copter);
+            }
+
         }
     }
 }

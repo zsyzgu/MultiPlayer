@@ -23,7 +23,7 @@ public class Spawner : NetworkBehaviour {
         Vector2 mapPos = info.getPos();
         Vector2 mapSize = info.getSize();
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 16; i++) {
             float z = 0f, rot = 0f;
             int player = i % 2;
             if (player == 0) {
@@ -37,12 +37,12 @@ public class Spawner : NetworkBehaviour {
             Quaternion spawnRotation = Quaternion.Euler(0.0f, rot, 0.0f);
 
             float ran = Random.Range(0f, 1f);
-            if (ran < 0.5f) {
+            if (ran < 0.55f) {
                 GameObject tank = (GameObject)Instantiate(tankPrefab, spawnPosition, spawnRotation);
                 tank.name = "Tank";
                 tank.GetComponent<TankControl>().player = player;
                 NetworkServer.Spawn(tank);
-            } else if (ran < 0.8f) {
+            } else if (ran < 0.80f) {
                 GameObject copter = (GameObject)Instantiate(copterPrefab, spawnPosition, spawnRotation);
                 copter.name = "Copter";
                 copter.GetComponent<CopterControl>().player = player;

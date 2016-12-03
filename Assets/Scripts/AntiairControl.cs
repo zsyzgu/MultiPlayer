@@ -23,7 +23,7 @@ public class AntiairControl : UnitControl {
     public GameObject destroyEffect;
 
     void Start() {
-        timeInterval = 1.5f;
+        timeInterval = 1.2f;
         battery = searchChild(gameObject, "Battery");
         bulletSpawner = searchChild(battery, "BulletSpawner").transform;
         tankMoveSound = GetComponent<AudioSource>();

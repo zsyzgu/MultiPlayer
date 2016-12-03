@@ -19,7 +19,7 @@ public class CopterControl : UnitControl {
     public GameObject destroyEffect;
 
     void Start() {
-        timeInterval = 0.25f;
+        timeInterval = 0.2f;
         roter = searchChild(gameObject, "Roter");
         bulletSpawner = searchChild(gameObject, "BulletSpawner").transform;
         tankMoveSound = GetComponent<AudioSource>();

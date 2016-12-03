@@ -23,7 +23,7 @@ public class TankControl : UnitControl {
     public GameObject destroyEffect;
 
 	void Start () {
-        timeInterval = 4f;
+        timeInterval = 5f;
         battery = searchChild(gameObject, "Battery");
         bulletSpawner = searchChild(battery, "BulletSpawner").transform;
         tankMoveSound = GetComponent<AudioSource>();

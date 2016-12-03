@@ -1,0 +1,243 @@
+fileFormatVersion: 2
+guid: 1cd9ff851efdd0c4e8c83485f0e6998b
+timeCreated: 1480743874
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Apac70mm
+    100002: ApacAmmo
+    100004: ApacBgea
+    100006: ApacBott
+    100008: ApacBwhe
+    100010: ApacBwhe0
+    100012: 'ApacCock '
+    100014: ApacCono
+    100016: Apacfus2
+    100018: 'Apacfuse '
+    100020: ApacfusT
+    100022: Apacgea2
+    100024: Apacgear
+    100026: 'ApacGlas  '
+    100028: //RootNode
+    100030: ApacLigh
+    100032: ApacLwhe
+    100034: ApacMgu1
+    100036: ApacMgu2
+    100038: ApacMgun
+    100040: ApacRad1
+    100042: ApacRad2
+    100044: ApacRad3
+    100046: ApacRad4
+    100048: ApacRad5
+    100050: ApacRado
+    100052: ApacRaxi
+    100054: ApacRot2
+    100056: 'ApacRoto '
+    100058: ApacRwhe
+    100060: Apacside
+    100062: ApacTrot
+    100064: 'ApacTrot '
+    100066: ApacWin2
+    100068: ApacWing
+    400000: Apac70mm
+    400002: ApacAmmo
+    400004: ApacBgea
+    400006: ApacBott
+    400008: ApacBwhe
+    400010: ApacBwhe0
+    400012: 'ApacCock '
+    400014: ApacCono
+    400016: Apacfus2
+    400018: 'Apacfuse '
+    400020: ApacfusT
+    400022: Apacgea2
+    400024: Apacgear
+    400026: 'ApacGlas  '
+    400028: //RootNode
+    400030: ApacLigh
+    400032: ApacLwhe
+    400034: ApacMgu1
+    400036: ApacMgu2
+    400038: ApacMgun
+    400040: ApacRad1
+    400042: ApacRad2
+    400044: ApacRad3
+    400046: ApacRad4
+    400048: ApacRad5
+    400050: ApacRado
+    400052: ApacRaxi
+    400054: ApacRot2
+    400056: 'ApacRoto '
+    400058: ApacRwhe
+    400060: Apacside
+    400062: ApacTrot
+    400064: 'ApacTrot '
+    400066: ApacWin2
+    400068: ApacWing
+    2300000: Apac70mm
+    2300002: ApacAmmo
+    2300004: ApacBgea
+    2300006: ApacBott
+    2300008: ApacBwhe
+    2300010: ApacBwhe0
+    2300012: 'ApacCock '
+    2300014: ApacCono
+    2300016: Apacfus2
+    2300018: 'Apacfuse '
+    2300020: ApacfusT
+    2300022: Apacgea2
+    2300024: Apacgear
+    2300026: 'ApacGlas  '
+    2300028: ApacLigh
+    2300030: ApacLwhe
+    2300032: ApacMgu1
+    2300034: ApacMgu2
+    2300036: ApacMgun
+    2300038: ApacRad1
+    2300040: ApacRad2
+    2300042: ApacRad3
+    2300044: ApacRad4
+    2300046: ApacRad5
+    2300048: ApacRado
+    2300050: ApacRaxi
+    2300052: ApacRot2
+    2300054: 'ApacRoto '
+    2300056: ApacRwhe
+    2300058: Apacside
+    2300060: ApacTrot
+    2300062: 'ApacTrot '
+    2300064: ApacWin2
+    2300066: ApacWing
+    3300000: Apac70mm
+    3300002: ApacAmmo
+    3300004: ApacBgea
+    3300006: ApacBott
+    3300008: ApacBwhe
+    3300010: ApacBwhe0
+    3300012: 'ApacCock '
+    3300014: ApacCono
+    3300016: Apacfus2
+    3300018: 'Apacfuse '
+    3300020: ApacfusT
+    3300022: Apacgea2
+    3300024: Apacgear
+    3300026: 'ApacGlas  '
+    3300028: ApacLigh
+    3300030: ApacLwhe
+    3300032: ApacMgu1
+    3300034: ApacMgu2
+    3300036: ApacMgun
+    3300038: ApacRad1
+    3300040: ApacRad2
+    3300042: ApacRad3
+    3300044: ApacRad4
+    3300046: ApacRad5
+    3300048: ApacRado
+    3300050: ApacRaxi
+    3300052: ApacRot2
+    3300054: 'ApacRoto '
+    3300056: ApacRwhe
+    3300058: Apacside
+    3300060: ApacTrot
+    3300062: 'ApacTrot '
+    3300064: ApacWin2
+    3300066: ApacWing
+    4300000: 'ApacCock '
+    4300002: Apacgea2
+    4300004: ApacAmmo
+    4300006: ApacWing
+    4300008: 'ApacGlas  '
+    4300010: ApacCono
+    4300012: ApacMgu1
+    4300014: ApacMgun
+    4300016: ApacMgu2
+    4300018: ApacBott
+    4300020: ApacRot2
+    4300022: ApacRad3
+    4300024: ApacRad1
+    4300026: ApacRad2
+    4300028: ApacRad5
+    4300030: ApacRad4
+    4300032: ApacRado
+    4300034: ApacTrot
+    4300036: 'ApacTrot '
+    4300038: ApacBgea
+    4300040: ApacRwhe
+    4300042: ApacBwhe
+    4300044: ApacBwhe0
+    4300046: ApacLwhe
+    4300048: Apac70mm
+    4300050: ApacWin2
+    4300052: 'Apacfuse '
+    4300054: ApacfusT
+    4300056: Apacside
+    4300058: Apacfus2
+    4300060: Apacgear
+    4300062: 'ApacRoto '
+    4300064: ApacRaxi
+    4300066: ApacLigh
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -31,13 +31,13 @@ public class Spawner : NetworkBehaviour {
             float z = 0f, rot = 0f;
             int player = i % 2;
             if (player == 0) {
-                z = Random.Range(mapPos.y + mapSize.y * 0.1f, mapPos.y + mapSize.y * 0.3f);
+                z = Random.Range(mapPos.y + mapSize.y * 0.1f, mapPos.y + mapSize.y * 0.2f);
                 rot = 0f;
             } else {
-                z = Random.Range(mapPos.y + mapSize.y * 0.7f, mapPos.y + mapSize.y * 0.9f);
+                z = Random.Range(mapPos.y + mapSize.y * 0.8f, mapPos.y + mapSize.y * 0.9f);
                 rot = 180f;
             }
-            Vector3 spawnPosition = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.2f, mapPos.x + mapSize.x * 0.8f), 1.0f, z);
+            Vector3 spawnPosition = new Vector3(Random.Range(mapPos.x + mapSize.x * 0.3f, mapPos.x + mapSize.x * 0.7f), 1.0f, z);
             Quaternion spawnRotation = Quaternion.Euler(0.0f, rot, 0.0f);
 
             GameObject tank = (GameObject)Instantiate(tankPrefab, spawnPosition, spawnRotation);

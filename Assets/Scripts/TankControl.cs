@@ -30,10 +30,13 @@ public class TankControl : UnitControl {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
         mapPos = info.getPos();
         mapSize = info.getSize();
-        float mapScale = mapSize.magnitude;
+        /*float mapScale = mapSize.magnitude;
         view = mapScale * 0.25f;
         range = mapScale * 0.2f;
-        speed = mapScale * 0.01f;
+        speed = mapScale * 0.01f;*/
+        view = 50f;
+        range = 40f;
+        speed = 2f;
         angularSpeed = 15f;
         batteryAngularSpeed = 30f;
         timeInterval = 4f;

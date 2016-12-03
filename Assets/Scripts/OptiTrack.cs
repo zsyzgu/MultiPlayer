@@ -53,7 +53,7 @@ public class OptiTrack : MonoBehaviour {
                     posList.Clear();
                     break;
                 case "rbposition":
-                    posList.Add(0.5f * new Vector3(float.Parse(args[1]), -float.Parse(args[2]), float.Parse(args[3])));
+                    posList.Add(0.5f * new Vector3(-float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])));
                     break;
             }
         }

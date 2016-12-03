@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Networking;
 
-public class TankControl : UnitControl {
-    private float view = 50f;
-    private float range = 40f;
-    private float speed = 2f;
-    private float angularSpeed = 15f;
-    private float batteryAngularSpeed = 30f;
+public class AntiairControl : UnitControl {
+    private float view = 75f;
+    private float range = 45f;
+    private float speed = 2.5f;
+    private float angularSpeed = 20f;
+    private float batteryAngularSpeed = 50f;
 
     private Vector3 targetPos;
     private GameObject targetObj;
@@ -22,18 +22,17 @@ public class TankControl : UnitControl {
 
     public GameObject destroyEffect;
 
-	void Start () {
-        timeInterval = 4f;
+    void Start() {
+        timeInterval = 1f;
         battery = searchChild(gameObject, "Battery");
         bulletSpawner = searchChild(battery, "BulletSpawner").transform;
         tankMoveSound = GetComponent<AudioSource>();
         batteryRotateSound = battery.GetComponent<AudioSource>();
         attackTypes = new List<string>();
-        attackTypes.Add("Tank");
-        attackTypes.Add("Antiair");
+        attackTypes.Add("Copter");
     }
-	
-	new void Update () {
+
+    new void Update() {
         base.Update();
 
         if (isServer == false) {
@@ -44,7 +43,7 @@ public class TankControl : UnitControl {
         act();
         playSound();
         selfDestruction();
-	}
+    }
 
     void selfDestruction() {
         if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
@@ -57,7 +56,8 @@ public class TankControl : UnitControl {
             if (!tankMoveSound.isPlaying) {
                 tankMoveSound.Play();
             }
-        } else {
+        }
+        else {
             if (tankMoveSound.isPlaying) {
                 tankMoveSound.Stop();
             }
@@ -66,7 +66,8 @@ public class TankControl : UnitControl {
             if (!batteryRotateSound.isPlaying) {
                 batteryRotateSound.Play();
             }
-        } else {
+        }
+        else {
             if (batteryRotateSound.isPlaying) {
                 batteryRotateSound.Stop();
             }
@@ -79,7 +80,7 @@ public class TankControl : UnitControl {
         if (targetObj != null) {
             return;
         }
-        
+
         targetObj = getNearbyUnit(view, attackTypes);
 
         if (targetObj != null || targetPos != Vector3.zero) {
@@ -99,10 +100,12 @@ public class TankControl : UnitControl {
                     targetPos += new Vector3(0f, collider.center.y, 0f);
                 }
                 fireAt(targetPos);
-            } else {
+            }
+            else {
                 moveTo(targetObj.transform.position);
             }
-        } else {
+        }
+        else {
             if (moveTo(targetPos)) {
                 targetPos = Vector3.zero;
             }
@@ -119,7 +122,8 @@ public class TankControl : UnitControl {
         } else {
             if (angle < -1f) {
                 CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            } else if (angle > 1f) {
+            }
+            else if (angle > 1f) {
                 CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
@@ -133,7 +137,8 @@ public class TankControl : UnitControl {
         float angle = calnAngle(transform.forward, pos - transform.position);
         if (angle < -1f) {
             CmdRotate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
-        } else if (angle > 1f) {
+        }
+        else if (angle > 1f) {
             CmdRotate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
         }
         if (Mathf.Abs(angle) <= 90) {
@@ -141,13 +146,14 @@ public class TankControl : UnitControl {
             angle = calnAngle(battery.transform.forward, transform.forward);
             if (angle < -1f) {
                 CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            } else if (angle > 1f) {
+            }
+            else if (angle > 1f) {
                 CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
         return false;
     }
-    
+
     public override void destroy() {
         CmdDestroy();
     }

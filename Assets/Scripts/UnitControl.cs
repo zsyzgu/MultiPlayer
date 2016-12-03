@@ -16,6 +16,9 @@ public class UnitControl : NetworkBehaviour {
     protected List<string> attackTypes;
     protected float minHeight;
     protected float maxHeight;
+    protected Transform bulletSpawner;
+    protected float bulletSpeed = 100f;
+    protected float accuracy = 0.5f;
 
     protected void Update() {
         cd = Mathf.Max(0f, cd - Time.deltaTime);
@@ -106,5 +109,15 @@ public class UnitControl : NetworkBehaviour {
 
     protected Vector3 randomVector(float radius) {
         return new Vector3(Random.Range(-radius, radius), Random.Range(-radius, radius), Random.Range(-radius, radius));
+    }
+
+    [Command]
+    protected void CmdFire(Vector3 targetPos) {
+        Vector3 v = (targetPos + randomVector(accuracy) - bulletSpawner.position).normalized * bulletSpeed;
+        GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, new Quaternion());
+        bullet.transform.forward = v.normalized;
+        bullet.GetComponent<Rigidbody>().velocity = v;
+        NetworkServer.Spawn(bullet);
+        bulletSpawner.GetComponent<AudioSource>().Play();
     }
 }

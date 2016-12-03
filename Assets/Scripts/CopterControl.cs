@@ -6,16 +6,13 @@ using UnityEngine.Networking;
 public class CopterControl : UnitControl {
     private float view = 75f;
     private float range = 50f;
-    private float speed = 2f;
+    private float speed = 3.5f;
     private float angularSpeed = 15f;
     private float roterAngularSpeed = 720f;
-    private float bulletSpeed = 100f;
-    private float accuracy = 0.5f;
 
     private Vector3 targetPos;
     private GameObject targetObj;
     private GameObject roter;
-    private Transform bulletSpawner;
 
     private AudioSource tankMoveSound;
 
@@ -29,6 +26,7 @@ public class CopterControl : UnitControl {
         attackTypes = new List<string>();
         attackTypes.Add("Tank");
         attackTypes.Add("Copter");
+        attackTypes.Add("Antiair");
     }
 
     new void Update() {
@@ -140,14 +138,6 @@ public class CopterControl : UnitControl {
     void CmdDestroy() {
         GameObject effect = (GameObject)Instantiate(destroyEffect, transform.position, new Quaternion());
         NetworkServer.Spawn(effect);
-    }
-
-    [Command]
-    void CmdFire(Vector3 targetPos) {
-        GameObject bullet = (GameObject)Instantiate(bulletPrefab, bulletSpawner.position, bulletSpawner.rotation);
-        bullet.GetComponent<Rigidbody>().velocity = (targetPos + randomVector(accuracy) - bulletSpawner.position).normalized * bulletSpeed;
-        NetworkServer.Spawn(bullet);
-        bulletSpawner.GetComponent<AudioSource>().Play();
     }
 
     [Command]

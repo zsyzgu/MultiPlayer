@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bullet : MonoBehaviour {
+public class Shell : MonoBehaviour {
     public GameObject explosionEffect;
     public int damage = 50;
     public float range = 10f;
@@ -11,19 +11,23 @@ public class Bullet : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision collision) {
-        explode();
+        explode(collision.gameObject);
     }
 
-    void explode() {
+    void explode(GameObject target) {
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 
         foreach (GameObject unit in units) {
             UnitControl unitControl = unit.GetComponent<UnitControl>();
-
+            
             if (unitControl != null) {
-                float dist = Vector3.Distance(transform.position, unit.transform.position);
-                if (dist < range) {
-                    unitControl.takeDamage((int)(damage * (1f - dist / range)));
+                if (unit == target) {
+                    unitControl.takeDamage(damage);
+                } else {
+                    float dist = Vector3.Distance(transform.position, unit.transform.position);
+                    if (dist < range) {
+                        unitControl.takeDamage((int)(damage * (1f - dist / range)));
+                    }
                 }
             }
         }

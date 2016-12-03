@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class TankControl : UnitControl {
+public class CopterControl : UnitControl {
     private float view;
     private float range;
     private float speed;
@@ -26,14 +26,10 @@ public class TankControl : UnitControl {
 
     public GameObject destroyEffect;
 
-	void Start () {
+    void Start() {
         TerrainInfo info = GameObject.Find("Terrain").GetComponent<TerrainInfo>();
         mapPos = info.getPos();
         mapSize = info.getSize();
-        /*float mapScale = mapSize.magnitude;
-        view = mapScale * 0.25f;
-        range = mapScale * 0.2f;
-        speed = mapScale * 0.01f;*/
         view = 50f;
         range = 40f;
         speed = 2f;
@@ -56,8 +52,8 @@ public class TankControl : UnitControl {
         tankMoveSound = GetComponent<AudioSource>();
         batteryRotateSound = battery.GetComponent<AudioSource>();
     }
-	
-	new void Update () {
+
+    new void Update() {
         base.Update();
 
         if (isServer == false) {
@@ -68,7 +64,7 @@ public class TankControl : UnitControl {
         act();
         playSound();
         selfDestruction();
-	}
+    }
 
     void selfDestruction() {
         if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
@@ -81,7 +77,8 @@ public class TankControl : UnitControl {
             if (!tankMoveSound.isPlaying) {
                 tankMoveSound.Play();
             }
-        } else {
+        }
+        else {
             if (tankMoveSound.isPlaying) {
                 tankMoveSound.Stop();
             }
@@ -90,7 +87,8 @@ public class TankControl : UnitControl {
             if (!batteryRotateSound.isPlaying) {
                 batteryRotateSound.Play();
             }
-        } else {
+        }
+        else {
             if (batteryRotateSound.isPlaying) {
                 batteryRotateSound.Stop();
             }
@@ -142,10 +140,12 @@ public class TankControl : UnitControl {
                     targetPos += new Vector3(0f, collider.center.y, 0f);
                 }
                 fireAt(targetPos);
-            } else {
+            }
+            else {
                 moveTo(targetObj.transform.position);
             }
-        } else {
+        }
+        else {
             if (moveTo(targetPos)) {
                 targetPos = Vector3.zero;
             }
@@ -159,10 +159,12 @@ public class TankControl : UnitControl {
                 resetCd();
                 CmdFire(pos);
             }
-        } else {
+        }
+        else {
             if (angle < -1f) {
                 CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            } else if (angle > 1f) {
+            }
+            else if (angle > 1f) {
                 CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
@@ -184,7 +186,8 @@ public class TankControl : UnitControl {
         float angle = calnAngle(transform.forward, pos - transform.position);
         if (angle < -1f) {
             CmdRoate(-Mathf.Min(-angle, angularSpeed * Time.deltaTime));
-        } else if (angle > 1f) {
+        }
+        else if (angle > 1f) {
             CmdRoate(Mathf.Min(angle, angularSpeed * Time.deltaTime));
         }
         if (Mathf.Abs(angle) <= 90) {
@@ -192,13 +195,14 @@ public class TankControl : UnitControl {
             angle = calnAngle(battery.transform.forward, transform.forward);
             if (angle < -1f) {
                 CmdBatteryRotate(-Mathf.Min(-angle, batteryAngularSpeed * Time.deltaTime));
-            } else if (angle > 1f) {
+            }
+            else if (angle > 1f) {
                 CmdBatteryRotate(Mathf.Min(angle, batteryAngularSpeed * Time.deltaTime));
             }
         }
         return false;
     }
-    
+
     public override void destroy() {
         CmdDestroy();
     }

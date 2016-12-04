@@ -12,9 +12,10 @@ public class OptiTrack : MonoBehaviour {
 
     private TcpClient socket;
     private OptiFrame currFrame = null;
+    private Thread thread;
 
     private void connect() {
-        Thread thread = new Thread(receiveThread);
+        thread = new Thread(receiveThread);
         thread.Start();
     }
 
@@ -55,6 +56,9 @@ public class OptiTrack : MonoBehaviour {
                 case "rbposition":
                     posList.Add(0.5f * new Vector3(-float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])));
                     break;
+                case "othermarker":
+                    frame.addMarker(0.5f * new Vector3(-float.Parse(args[1]), float.Parse(args[2]), float.Parse(args[3])));
+                    break;
             }
         }
     }
@@ -83,7 +87,15 @@ public class OptiTrack : MonoBehaviour {
         return pos;
     }
 
-    void OnDestory() {
+    public List<Vector3> getMarkers() {
+        if (currFrame != null) {
+            return currFrame.getMarkers();
+        }
+        return null;
+    }
+
+    void OnApplicationQuit() {
         socket.Close();
+        thread.Abort();
     }
 }

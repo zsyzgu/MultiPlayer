@@ -6,15 +6,21 @@ public class OptiFrame {
     private List<int> idList;
     private List<Vector3> posList;
     private List<Vector3> dirList;
+    private List<Vector3> markers;
 
     public OptiFrame() {
         idList = new List<int>();
         posList = new List<Vector3>();
         dirList = new List<Vector3>();
+        markers = new List<Vector3>();
     }
 
     public int count() {
         return idList.Count;
+    }
+
+    public void addMarker(Vector3 marker) {
+        markers.Add(marker);
     }
 
     public void addRb(int rbID, Vector3 pos, Vector3 dir) {
@@ -49,5 +55,9 @@ public class OptiFrame {
             }
         }
         return Vector3.zero;
+    }
+
+    public List<Vector3> getMarkers() {
+        return markers;
     }
 }

@@ -6,8 +6,8 @@ public class PlayerControl : UnitControl {
     private GameObject eye;
 	
     void Start() {
-        transform.position = new Vector3(50, 50, 50);
-        //
+        transform.position = new Vector3(110f, 67.5f, 50f);
+
         if (NetManager.isPlayer0() ^ isLocalPlayer) {
             player = 1;
         } else {
@@ -59,8 +59,11 @@ public class PlayerControl : UnitControl {
             Vector3 targetPos = track.getPlayerPos(player);
             if (targetPos != Vector3.zero) {
                 moveTo(targetPos * 100f);
-                //TODO: Direction calibration.
-                //transform.forward = track.getPlayerDir(player);
+                Vector3 dir = track.getPlayerDir(player);
+                float angle = calnAngle(eye.transform.forward, dir);
+                if (Mathf.Abs(angle) > 5f) {
+                    transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + angle, transform.eulerAngles.z);
+                }
             }
         }
     }

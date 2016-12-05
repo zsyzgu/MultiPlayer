@@ -30,12 +30,14 @@ public class OptiFrame {
     }
 
     public void addRb(int rbID, List<Vector3> posList) {
-        if (rbID == 1 || rbID == 2 && posList.Count == 3) {
+        if ((rbID == 1 || rbID == 2) && posList.Count == 3) {
             Vector3 dir = Vector3.Cross(posList[1] - posList[0], posList[2] - posList[0]).normalized;
             Vector3 pos = posList[0] - dir * 0.15f;
             addRb(rbID, pos, dir);
-        } else {
-
+        } else if ((rbID == 3 || rbID == 4) && posList.Count == 3) {
+            Vector3 pos = (posList[0] + posList[1]) / 2;
+            Vector3 dir = (posList[1] - posList[0]).normalized;
+            addRb(rbID, pos, dir);
         }
     }
 

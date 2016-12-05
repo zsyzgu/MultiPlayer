@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 
 public class JeepControl : UnitControl {
     private Spawner spawner;
+    private OptiTrack optiTrack;
 
 	void Start () {
         if (isServer == false) {
@@ -18,6 +19,15 @@ public class JeepControl : UnitControl {
 	
 	new void Update () {
         base.Update();
+
+        if (optiTrack == null) {
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            for (int i = 0; i < players.Length; i++) {
+                if (players[i].GetComponent<UnitControl>().player == player) {
+                    optiTrack = players[i].GetComponent<OptiTrack>();
+                }
+            }
+        }
 
         if (isServer == false) {
             return;
@@ -44,12 +54,11 @@ public class JeepControl : UnitControl {
     }
 
     void calibrateTransform() {
-        OptiTrack track = GetComponent<OptiTrack>();
-        if (track != null) {
-            Vector3 targetPos = track.getRbPos(player + 3);
+        if (optiTrack != null) {
+            Vector3 targetPos = optiTrack.getRbPos(player + 3);
             if (targetPos != Vector3.zero) {
                 CmdMoveTo(targetPos * 100f);
-                Vector3 dir = track.getRbDir(player + 3);
+                Vector3 dir = optiTrack.getRbDir(player + 3);
                 float angle = calnAngle(transform.forward, dir);
                 CmdRotateTo(transform.eulerAngles.y + angle);
             }
@@ -58,13 +67,13 @@ public class JeepControl : UnitControl {
 
     [Command]
     void CmdMoveTo(Vector3 targetPos) {
-        targetPos = new Vector3(targetPos.x, transform.position.y, targetPos.y);
+        targetPos = new Vector3(targetPos.x, transform.position.y, targetPos.z);
         float smoothRate = 0.5f;
         transform.position = transform.position * smoothRate + targetPos * (1 - smoothRate);
     }
 
     [Command]
     void CmdRotateTo(float y) {
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
+        transform.eulerAngles = new Vector3(0, y, 0);
     }
 }

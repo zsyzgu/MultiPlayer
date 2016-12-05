@@ -8,8 +8,14 @@ public class PlayerControl : UnitControl {
     void Start() {
         transform.position = new Vector3(110f, 50f, 67.5f);
         
-        player = GameObject.FindGameObjectsWithTag("Player").Length - 1;
-        if (player >= 2) {
+        if (NetManager.isPlayer0() ^ isLocalPlayer) {
+            player = 1;
+        } else {
+            player = 0;
+        }
+        int playerCnt = GameObject.FindGameObjectsWithTag("Player").Length;
+        if (playerCnt >= 3) {
+            player = playerCnt - 1;
             transform.position = new Vector3(110f, 100f, 67.5f);
             transform.eulerAngles = new Vector3(90f, 0f, 0f);
         }
@@ -26,11 +32,11 @@ public class PlayerControl : UnitControl {
             }
         }
 
+        name = "Player";
         if (isLocalPlayer == false) {
             return;
         }
 
-        name = "Player";
         eye.GetComponent<Camera>().enabled = true;
         GetComponent<AudioListener>().enabled = true;
         if (player == 1) {
@@ -59,11 +65,11 @@ public class PlayerControl : UnitControl {
         if (track != null) {
             Vector3 targetPos = track.getRbPos(player + 1);
             if (targetPos != Vector3.zero) {
-                CmdMoveTo(targetPos * 100f);
+                moveTo(targetPos * 100f);
                 Vector3 dir = track.getRbDir(player + 1);
                 float angle = calnAngle(eye.transform.forward, dir);
-                if (Mathf.Abs(angle) > 5f) {
-                    CmdRotateTo(transform.eulerAngles.y + angle);
+                if (Mathf.Abs(angle) > 20f) {
+                    rotateTo(transform.eulerAngles.y + angle);
                 }
             }
         }
@@ -100,14 +106,12 @@ public class PlayerControl : UnitControl {
         NetworkServer.Spawn(bullet);
     }
     
-    [Command]
-    void CmdMoveTo(Vector3 targetPos) {
+    void moveTo(Vector3 targetPos) {
         float smoothRate = 0.5f;
         transform.position = transform.position * smoothRate + targetPos * (1 - smoothRate);
     }
-
-    [Command]
-    void CmdRotateTo(float y) {
+    
+    void rotateTo(float y) {
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
     }
 

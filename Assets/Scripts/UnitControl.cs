@@ -10,6 +10,7 @@ public class UnitControl : NetworkBehaviour {
     public bool destroyOnDeath;
     public int player;
     public GameObject bulletPrefab;
+    public GameObject colorCube;
     protected Transform bulletSpawn;
     protected float timeInterval = 0f;
     private float cd = 0f;
@@ -22,6 +23,17 @@ public class UnitControl : NetworkBehaviour {
 
     protected void Update() {
         cd = Mathf.Max(0f, cd - Time.deltaTime);
+        setColor();
+    }
+
+    private void setColor() {
+        if (player == 0) {
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(1f, 0f, 0f, 0.5f);
+        } else if (player == 1) {
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, 0f, 1f, 0.5f);
+        } else {
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, 1f, 0f, 0.5f);
+        }
     }
 
     protected bool canFire() {

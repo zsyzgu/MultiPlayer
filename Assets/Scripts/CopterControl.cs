@@ -27,6 +27,7 @@ public class CopterControl : UnitControl {
         attackTypes.Add("Tank");
         attackTypes.Add("Copter");
         attackTypes.Add("Antiair");
+        attackTypes.Add("Jeep");
     }
 
     new void Update() {
@@ -40,12 +41,6 @@ public class CopterControl : UnitControl {
         act();
         playSound();
         selfDestruction();
-    }
-
-    void selfDestruction() {
-        if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
-            takeDamage(100);
-        }
     }
 
     void playSound() {

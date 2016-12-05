@@ -120,4 +120,10 @@ public class UnitControl : NetworkBehaviour {
         NetworkServer.Spawn(bullet);
         bulletSpawner.GetComponent<AudioSource>().Play();
     }
+
+    protected void selfDestruction() {
+        if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
+            takeDamage(1000);
+        }
+    }
 }

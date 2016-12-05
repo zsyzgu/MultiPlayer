@@ -45,12 +45,6 @@ public class AntiairControl : UnitControl {
         selfDestruction();
     }
 
-    void selfDestruction() {
-        if (Vector3.Dot(transform.up, Vector3.up) <= 0f || transform.position.y < -100f) {
-            takeDamage(100);
-        }
-    }
-
     void playSound() {
         if (moved) {
             if (!tankMoveSound.isPlaying) {

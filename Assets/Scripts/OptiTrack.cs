@@ -71,18 +71,18 @@ public class OptiTrack : MonoBehaviour {
         return currFrame;
     }
 
-    public Vector3 getPlayerPos(int player) {
+    public Vector3 getRbPos(int id) {
         Vector3 pos = Vector3.zero;
         if (currFrame != null) {
-            pos = currFrame.getPos(player + 1);
+            pos = currFrame.getPos(id);
         }
         return pos;
     }
 
-    public Vector3 getPlayerDir(int player) {
+    public Vector3 getRbDir(int id) {
         Vector3 pos = Vector3.zero;
         if (currFrame != null) {
-            pos = currFrame.getDir(player + 1);
+            pos = currFrame.getDir(id);
         }
         return pos;
     }

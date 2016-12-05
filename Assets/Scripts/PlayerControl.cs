@@ -6,12 +6,12 @@ public class PlayerControl : UnitControl {
     private GameObject eye;
 	
     void Start() {
-        transform.position = new Vector3(110f, 67.5f, 50f);
-
-        if (NetManager.isPlayer0() ^ isLocalPlayer) {
-            player = 1;
-        } else {
-            player = 0;
+        transform.position = new Vector3(110f, 50f, 67.5f);
+        
+        player = GameObject.FindGameObjectsWithTag("Player").Length - 1;
+        if (player >= 2) {
+            transform.position = new Vector3(110f, 100f, 67.5f);
+            transform.eulerAngles = new Vector3(90f, 0f, 0f);
         }
         foreach (Transform child in transform) {
             if (child.gameObject.name == "Camera") {
@@ -29,7 +29,8 @@ public class PlayerControl : UnitControl {
         if (isLocalPlayer == false) {
             return;
         }
-        
+
+        name = "Player";
         eye.GetComponent<Camera>().enabled = true;
         GetComponent<AudioListener>().enabled = true;
         if (player == 1) {
@@ -38,7 +39,7 @@ public class PlayerControl : UnitControl {
     }
 
 	new void Update() {
-        if (isLocalPlayer == false) {
+        if (isLocalPlayer == false || player >= 2) {
             return;
         }
 
@@ -56,13 +57,13 @@ public class PlayerControl : UnitControl {
     void calibrateTransform() {
         OptiTrack track = GetComponent<OptiTrack>();
         if (track != null) {
-            Vector3 targetPos = track.getPlayerPos(player);
+            Vector3 targetPos = track.getRbPos(player + 1);
             if (targetPos != Vector3.zero) {
-                moveTo(targetPos * 100f);
-                Vector3 dir = track.getPlayerDir(player);
+                CmdMoveTo(targetPos * 100f);
+                Vector3 dir = track.getRbDir(player + 1);
                 float angle = calnAngle(eye.transform.forward, dir);
                 if (Mathf.Abs(angle) > 5f) {
-                    transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + angle, transform.eulerAngles.z);
+                    CmdRotateTo(transform.eulerAngles.y + angle);
                 }
             }
         }
@@ -99,9 +100,15 @@ public class PlayerControl : UnitControl {
         NetworkServer.Spawn(bullet);
     }
     
-    void moveTo(Vector3 targetPos) {
+    [Command]
+    void CmdMoveTo(Vector3 targetPos) {
         float smoothRate = 0.5f;
         transform.position = transform.position * smoothRate + targetPos * (1 - smoothRate);
+    }
+
+    [Command]
+    void CmdRotateTo(float y) {
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
     }
 
     public override void OnStartLocalPlayer() {

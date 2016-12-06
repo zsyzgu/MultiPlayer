@@ -13,12 +13,6 @@ public class PlayerControl : UnitControl {
         } else {
             player = 0;
         }
-        int playerCnt = GameObject.FindGameObjectsWithTag("Player").Length;
-        if (playerCnt >= 3) {
-            player = playerCnt - 1;
-            transform.position = new Vector3(110f, 100f, 67.5f);
-            transform.eulerAngles = new Vector3(90f, 0f, 0f);
-        }
         foreach (Transform child in transform) {
             if (child.gameObject.name == "Camera") {
                 eye = child.gameObject;
@@ -30,6 +24,17 @@ public class PlayerControl : UnitControl {
                 bulletSpawn = child;
                 break;
             }
+        }
+
+        int playerCnt = GameObject.FindGameObjectsWithTag("Player").Length;
+        if (playerCnt >= 3 && isLocalPlayer) {
+            GetComponent<OptiTrack>().enabled = false;
+            GetComponent<OtherMarker>().enabled = false;
+            transform.position = new Vector3(110f, 100f, 67.5f);
+            transform.eulerAngles = new Vector3(90f, 0f, 0f);
+            eye.GetComponent<Camera>().enabled = true;
+            GetComponent<PlayerControl>().enabled = false;
+            return;
         }
 
         name = "Player";
@@ -68,7 +73,7 @@ public class PlayerControl : UnitControl {
                 moveTo(targetPos * 100f);
                 Vector3 dir = track.getRbDir(player + 1);
                 float angle = calnAngle(eye.transform.forward, dir);
-                if (Mathf.Abs(angle) > 20f) {
+                if (Mathf.Abs(angle) > 90f) {
                     rotateTo(transform.eulerAngles.y + angle);
                 }
             }

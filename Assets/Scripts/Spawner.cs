@@ -67,7 +67,7 @@ public class Spawner : NetworkBehaviour {
                 z = mapPos.y + mapSize.y * 0.9f;
                 rot = 180f;
             }
-            Vector3 spawnPosition = new Vector3(mapPos.x + mapSize.x * (0.25f + 0.5f * i / n), 0.5f, z);
+            Vector3 spawnPosition = new Vector3(mapPos.x + mapSize.x * (0.25f + 0.5f * i / n), 0f, z);
             Quaternion spawnRotation = Quaternion.Euler(0.0f, rot, 0.0f);
             
             if (i < 2) {

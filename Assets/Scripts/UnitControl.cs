@@ -5,10 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 
 public class UnitControl : NetworkBehaviour {
-    const int MAX_HEALTH = 100;
-    [SyncVar (hook = "onChangeHealth")] public int currentHealth = MAX_HEALTH;
+    protected int maxHealth = 100;
+    [SyncVar] public int currentHealth = 100;
+    [SyncVar] public int player;
     public bool destroyOnDeath;
-    public int player;
     public GameObject bulletPrefab;
     public GameObject colorCube;
     protected Transform bulletSpawn;
@@ -27,12 +27,13 @@ public class UnitControl : NetworkBehaviour {
     }
 
     private void setColor() {
+        float v = (float)currentHealth / maxHealth;
         if (player == 0) {
-            colorCube.GetComponent<MeshRenderer>().material.color = new Color(1f, 0f, 0f, 0.5f);
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(v, 0f, 0f, 0.5f);
         } else if (player == 1) {
-            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, 0f, 1f, 0.5f);
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, 0f, v, 0.5f);
         } else {
-            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, 1f, 0f, 0.5f);
+            colorCube.GetComponent<MeshRenderer>().material.color = new Color(0f, v, 0f, 0.5f);
         }
     }
 
@@ -55,7 +56,7 @@ public class UnitControl : NetworkBehaviour {
                 destroy();
                 Destroy(gameObject);
             } else {
-                currentHealth = MAX_HEALTH;
+                currentHealth = maxHealth;
             }
         }
     }

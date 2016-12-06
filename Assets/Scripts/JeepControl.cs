@@ -12,7 +12,7 @@ public class JeepControl : UnitControl {
         }
 
         spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
-        currentHealth = 500;
+        maxHealth = currentHealth = 500;
         timeInterval = Random.Range(10f, 15f);
         resetCd();
     }
@@ -28,6 +28,9 @@ public class JeepControl : UnitControl {
                 }
             }
         }
+        
+        transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
+        transform.eulerAngles = new Vector3(0f, transform.eulerAngles.y, 0f);
 
         if (isServer == false) {
             return;
@@ -67,7 +70,7 @@ public class JeepControl : UnitControl {
 
     [Command]
     void CmdMoveTo(Vector3 targetPos) {
-        targetPos = new Vector3(targetPos.x, transform.position.y, targetPos.z);
+        targetPos = new Vector3(targetPos.x, 0, targetPos.z);
         float smoothRate = 0.5f;
         transform.position = transform.position * smoothRate + targetPos * (1 - smoothRate);
     }

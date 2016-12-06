@@ -26,17 +26,6 @@ public class PlayerControl : UnitControl {
             }
         }
 
-        int playerCnt = GameObject.FindGameObjectsWithTag("Player").Length;
-        if (playerCnt >= 3 && isLocalPlayer) {
-            GetComponent<OptiTrack>().enabled = false;
-            GetComponent<OtherMarker>().enabled = false;
-            transform.position = new Vector3(110f, 100f, 67.5f);
-            transform.eulerAngles = new Vector3(90f, 0f, 0f);
-            eye.GetComponent<Camera>().enabled = true;
-            GetComponent<PlayerControl>().enabled = false;
-            return;
-        }
-
         name = "Player";
         if (isLocalPlayer == false) {
             return;
@@ -44,13 +33,17 @@ public class PlayerControl : UnitControl {
 
         eye.GetComponent<Camera>().enabled = true;
         GetComponent<AudioListener>().enabled = true;
-        if (player == 1) {
+        if (GameObject.FindGameObjectsWithTag("Player").Length >= 3) {
+            player = 2;
+            transform.position = new Vector3(110f, 100f, 67.5f);
+            transform.eulerAngles = new Vector3(90f, 0f, 0f);
+        } else if (player == 1) {
             eye.transform.eulerAngles = new Vector3(0f, 180f, 0f);
         }
     }
 
 	new void Update() {
-        if (isLocalPlayer == false || player >= 2) {
+        if (isLocalPlayer == false || player == 2) {
             return;
         }
 

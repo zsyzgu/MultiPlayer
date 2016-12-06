@@ -3,7 +3,7 @@ namespace UnityEngine.Networking {
     [RequireComponent(typeof(NetworkManager))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class NetManager : MonoBehaviour {
-        const string SERVER_IP = "192.168.1.133";
+        const string SERVER_IP = "192.168.3.6";
         const float TIMEOUT = 1.0f;
         private string serverIP;
         private NetworkManager manager;

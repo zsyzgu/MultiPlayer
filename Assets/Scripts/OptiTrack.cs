@@ -7,7 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 
 public class OptiTrack : MonoBehaviour {
-    const string SERVER_IP = "192.168.1.124";
+    const string SERVER_IP = "192.168.3.7";
     const int SERVER_PORT = 7643;
 
     private TcpClient socket;
